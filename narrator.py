@@ -66,7 +66,7 @@ Rules: No bullet points except paragraph 3. No markdown headers. No fluff. Be di
     }
     
     try:
-        response = requests.post(url, json=payload, timeout=30)
+        response = requests.post(url, json=payload, timeout=60)
         response.raise_for_status()
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
@@ -94,7 +94,7 @@ def generate_summary_headline(chain: dict) -> str:
     }
 
     try:
-        response = requests.post(url, json=payload, timeout=30)
+        response = requests.post(url, json=payload, timeout=60)
         response.raise_for_status()
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text'].strip()
