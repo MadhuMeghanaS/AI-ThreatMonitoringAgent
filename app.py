@@ -54,7 +54,12 @@ def load_and_analyze():
     """Load logs, run detection pipeline, cache in session state."""
     logs_path = Path("sample_logs.json")
     if not logs_path.exists():
-        st.error("sample_logs.json not found. Run `python generate_logs.py` first.")
+        with st.spinner("Initializing first-run sample daily logs..."):
+            import subprocess
+            subprocess.run(["python", "generate_logs.py"])
+
+    if not logs_path.exists():
+        st.error("Could not initialize logs. Please check if generate_logs.py exists.")
         st.stop()
 
     raw = json.loads(logs_path.read_text())
