@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg-dark: #0f1117;
+  --card-bg: rgba(30, 34, 45, 0.7);
+  --accent-primary: #7f77dd;
+  --text-dim: #a0a0c0;
+}
+
+/* Main App Background */
+.stApp {
+  background: linear-gradient(135deg, #0f1117 0%, #161b22 100%);
+  color: #e0e0f0;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphic Metric Cards */
+.metric-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent-primary);
+}
+
+/* Badge Styling */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Tactic Pills */
+.tactic-pill {
+  background: rgba(127, 119, 221, 0.1);
+  border: 1px solid rgba(127, 119, 221, 0.3);
+  color: var(--accent-primary);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  margin: 3px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* AI Narrative Box */
+.narrative-box {
+  background: rgba(0, 0, 0, 0.2);
+  border-left: 4px solid var(--accent-primary);
+  padding: 24px;
+  border-radius: 4px 12px 12px 4px;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.8;
+  color: #d0d0e0;
+}
+
+/* Sidebar Customization */
+[data-testid="stSidebar"] {
+  background-color: #0d0f14;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Tab Styling */
+.stTabs [data-baseweb="tab"] {
+  color: #a0a0c0;
+}
+
+.stTabs [aria-selected="true"] {
+  color: #ffffff !important;
+  border-bottom: 2px solid var(--accent-primary) !important;
+}
+
+/* Typography */
+h1, h2, h3 {
+  font-weight: 700 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.stMarkdown {
+  font-family: 'Inter', sans-serif;
+}
