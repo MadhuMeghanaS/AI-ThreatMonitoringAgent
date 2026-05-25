@@ -17,7 +17,7 @@ def _get_api_key():
             raise ValueError(
                 "GEMINI_API_KEY not found. Set it as an environment variable or Streamlit secret."
             )
-    return api_key
+    return api_key.strip()
 
 
 def generate_narrative(chain: dict) -> str:
@@ -71,6 +71,9 @@ Rules: No bullet points except paragraph 3. No markdown headers. No fluff. Be di
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text']
     except Exception as e:
+        import traceback
+        print(f"DEBUG: Narrative failed. Response: {response.text if 'response' in locals() else 'No response'}")
+        traceback.print_exc()
         return f"Error generating narrative: {str(e)}"
 
 
@@ -85,7 +88,7 @@ def generate_summary_headline(chain: dict) -> str:
         f"No markdown. Start with the threat action."
     )
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}]
     }
@@ -96,4 +99,5 @@ def generate_summary_headline(chain: dict) -> str:
         result = response.json()
         return result['candidates'][0]['content']['parts'][0]['text'].strip()
     except Exception as e:
+        print(f"DEBUG: Summary failed. Response: {response.text if 'response' in locals() else 'No response'}")
         return f"Summary unavailable: {str(e)}"
