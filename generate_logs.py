@@ -16,7 +16,7 @@ import json
 import random
 from datetime import datetime, timedelta
 
-random.seed(42)
+# random.seed(42)  # Removed to allow for dynamic log generation on each run
 
 BASE_DATE = "2024-01-15"
 NORMAL_USERS = ["bob", "carol", "dave", "eve", "frank"]

@@ -5,6 +5,9 @@ Uses raw HTTP requests to avoid dependencies on broken DLLs (cryptography).
 
 import os
 import requests
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def _get_api_key():
     """Get Gemini API key from environment or Streamlit secrets."""
@@ -60,21 +63,33 @@ Paragraph 3 - IMMEDIATE ACTIONS (numbered list 1. 2. 3.):
 
 Rules: No bullet points except paragraph 3. No markdown headers. No fluff. Be direct."""
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    import time
+    
+    # Try gemini-1.5-flash first, fallback to 2.0 or vice versa? 
+    # Let's use 1.5-flash as it has better quota.
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}]
     }
     
-    try:
-        response = requests.post(url, json=payload, timeout=60)
-        response.raise_for_status()
-        result = response.json()
-        return result['candidates'][0]['content']['parts'][0]['text']
-    except Exception as e:
-        import traceback
-        print(f"DEBUG: Narrative failed. Response: {response.text if 'response' in locals() else 'No response'}")
-        traceback.print_exc()
-        return f"Error generating narrative: {str(e)}"
+    for attempt in range(3):
+        try:
+            response = requests.post(url, json=payload, timeout=60)
+            if response.status_code == 429:
+                print(f"DEBUG: Rate limited. Waiting {5 * (attempt + 1)}s...")
+                time.sleep(5 * (attempt + 1))
+                continue
+            response.raise_for_status()
+            result = response.json()
+            return result['candidates'][0]['content']['parts'][0]['text']
+        except Exception as e:
+            if attempt == 2:
+                import traceback
+                print(f"DEBUG: Narrative failed. Response: {response.text if 'response' in locals() else 'No response'}")
+                traceback.print_exc()
+                return f"Error generating narrative: {str(e)}"
+            time.sleep(2)
+    return "Error: Maximum retries reached."
 
 
 def generate_summary_headline(chain: dict) -> str:
@@ -88,7 +103,7 @@ def generate_summary_headline(chain: dict) -> str:
         f"No markdown. Start with the threat action."
     )
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key={api_key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}]
     }

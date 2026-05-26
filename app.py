@@ -9,6 +9,9 @@ from pathlib import Path
 
 import streamlit as st
 import pandas as pd
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 import plotly.graph_objects as go
 import plotly.express as px
 
@@ -50,11 +53,15 @@ def fmt_bytes(n: int) -> str:
     if n >= 1_000:     return f"{n/1_000:.1f} KB"
     return f"{n} B"
 
-def load_and_analyze():
+def load_and_analyze(force_regenerate=False):
     """Load logs, run detection pipeline, cache in session state."""
     logs_path = Path("sample_logs.json")
+    
+    if force_regenerate and logs_path.exists():
+        logs_path.unlink()  # Delete the old logs to force regeneration
+
     if not logs_path.exists():
-        with st.spinner("Initializing first-run sample daily logs..."):
+        with st.spinner("Generating fresh security logs..."):
             import subprocess
             subprocess.run(["python", "generate_logs.py"])
 
@@ -105,6 +112,15 @@ with st.sidebar:
     if st.button("🔄  Re-run analysis"):
         for k in ["df", "scored", "chains", "narratives"]:
             st.session_state.pop(k, None)
+        st.rerun()
+
+    if st.button("🔥  Regenerate Logs & Rerun"):
+        for k in ["df", "scored", "chains", "narratives"]:
+            st.session_state.pop(k, None)
+        df, scored, chains = load_and_analyze(force_regenerate=True)
+        st.session_state.df = df
+        st.session_state.scored = scored
+        st.session_state.chains = chains
         st.rerun()
 
     st.caption(f"Log events loaded: **{len(df):,}**")
@@ -219,7 +235,7 @@ with tab_chains:
                     )
                 if gen_btn or narrative_key in st.session_state:
                     if narrative_key not in st.session_state:
-                        with st.spinner("Claude is analysing the attack chain…"):
+                        with st.spinner("Analysing the attack chain…"):
                             narrative = generate_narrative(chain)
                             st.session_state[narrative_key] = narrative
                     narrative = st.session_state[narrative_key]
