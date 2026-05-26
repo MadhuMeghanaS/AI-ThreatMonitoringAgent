@@ -20,7 +20,7 @@ NarrativeGenerator   ← Claude API → plain-English analyst report per chain
 Streamlit Dashboard  ← live event feed, priority queue, analytics, MITRE heatmap
 ```
 
-## Setup (5 minutes)
+## Setup 
 
 ```bash
 # 1. Clone / enter the project folder
